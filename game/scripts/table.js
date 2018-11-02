@@ -6,40 +6,17 @@ class Table {
         this.wh = wh;
         this.width = this.ww - 2 * this.padding;
         this.height = this.wh - 2 * this.padding;
-        this.topLeftCorner = {
-            x: this.padding,
-            y: this.padding
-        };
-        this.bottomRightCorner = {
-            x: this.topLeftCorner.x + this.width,
-            y: this.topLeftCorner.y + this.height
-        }
+        this.topLeftCorner = createVector(this.padding, this.padding);
+        this.bottomRightCorner = createVector(this.topLeftCorner.x + this.width, this.topLeftCorner.y + this.height);
         this.friction = 0.975;
         this.holes = [
-            {
-                x: this.topLeftCorner.x,
-                y: this.topLeftCorner.y
-            },
-            {
-                x: this.topLeftCorner.x + this.width / 2,
-                y: this.topLeftCorner.y
-            },
-            {
-                x: this.topLeftCorner.x + this.width,
-                y: this.topLeftCorner.y
-            },
-            {
-                x: this.topLeftCorner.x,
-                y: this.topLeftCorner.y + this.height
-            },
-            {
-                x: this.topLeftCorner.x + this.width / 2,
-                y: this.topLeftCorner.y + this.height
-            },
-            {
-                x: this.topLeftCorner.x + this.width,
-                y: this.topLeftCorner.y + this.height
-            }
+            createVector(this.topLeftCorner.x, this.topLeftCorner.y),
+            createVector(this.topLeftCorner.x + this.width / 2, this.topLeftCorner.y),
+            createVector(this.topLeftCorner.x + this.width, this.topLeftCorner.y),
+            createVector(this.topLeftCorner.x, this.topLeftCorner.y + this.height),
+            createVector(this.topLeftCorner.x, this.topLeftCorner.y + this.height),
+            createVector(this.topLeftCorner.x + this.width / 2, this.topLeftCorner.y + this.height),
+            createVector(this.topLeftCorner.x + this.width, this.topLeftCorner.y + this.height),
         ];
         this.holeRadius = 20;
     }
@@ -57,6 +34,7 @@ class Table {
             this.height
         );
 
+        //draw holes
         for (let hole of this.holes) {
             ellipse(hole.x, hole.y, this.holeRadius * 2);
         }

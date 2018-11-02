@@ -16,24 +16,28 @@ function setup() {
 
     table = new Table(width, height, tableSprite);
 
-    cueball = new Ball(width / 5, height / 2, color(255, 255, 255));
-    cue = new Cue(cueball.x, cueball.y);
+    cueball = new Ball(width / 5, height / 2, 1, color(255, 255, 255));
+    cue = new Cue();
 
     player = new Player();
-}
 
+    balls = [];
+}
 
 function draw() {
     background(51);
-
-    table.display();
 
     mouse = {
         x: mouseX,
         y: mouseY
     }
 
+    table.display();
     cueball.update(table);
+
+    for (let ball of balls) {
+        ball.update(table);
+    }
 
     if (cueball.inPot) {
         player.isActive = false;
@@ -52,14 +56,12 @@ function mousePressed() {
     if (!player.isActive) return; 
 
     cue.isShooting = true;
-    cue.shootingPos = {
-        x: mouseX,
-        y: mouseY
-    }
+    cue.shootingPos.x = mouseX;
+    cue.shootingPos.y = mouseY;
 }
 
 function mouseReleased() {
-    if (!player.isActive) return; 
+    if (!player.isActive) return;
 
     cue.isShooting = false;
     cueball.shoot(cue.angle, cue.shootingStrength);
