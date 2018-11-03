@@ -1,12 +1,14 @@
 class Ball {
-    constructor(_x, _y, _mass, _color) {
+    constructor(_x, _y, _color, _number, _striped) {
         this.pos = createVector(_x, _y);
         this.color = _color
         this.radius = 15;
         this.vel = createVector(0, 0);
-        this.mass = _mass;
+        this.mass = 1;
         this.isMoving = false;
         this.inPot = false;
+        this.number = _number ? _number.toString() : '';
+        this.striped = _striped;
     }
 
     update(table) {
@@ -40,15 +42,54 @@ class Ball {
         this.pos.y += this.vel.y;
 
         //draw ball
-        noStroke();
+        noStroke();        
+        
         fill(this.color);
         ellipse(this.pos.x, this.pos.y, this.radius * 2);
+        if (this.striped) {
+            fill(255);
+            ellipse(this.pos.x, this.pos.y, this.radius + 8);
+        }
+
+        textSize(13);
+        fill(this.striped ? 0 : 255);
+        textAlign(CENTER, CENTER);
+        text(this.number, this.pos.x, this.pos.y)
     }
 
     shoot(angle, strength) {
         angle += PI;
-        this.vel.x = cos(angle) * strength * 0.2;
-        this.vel.y = sin(angle) * strength * 0.2;
+        this.vel.x = cos(angle) * strength * 0.1;
+        this.vel.y = sin(angle) * strength * 0.1;
         this.isMoving = true;
+
+        /*socket.emit('cueball update', {
+            vel: {
+                x: this.vel.x,
+                y: this.vel.y
+            }
+        });*/
+    }
+
+    collide(ball) {
+
+        let distance = dist(ball.pos.x, ball.pos.y, this.pos.x, this.pos.y);
+        
+        if (distance < ball.radius + this.radius) {
+            let diff = p5.Vector.sub(ball.pos, this.pos);
+            let normal = p5.Vector.div(diff, distance);
+            //let normal = diff.div(distance);
+            let velocityDelta = p5.Vector.sub(this.vel, ball.vel);
+            let dot = p5.Vector.dot(velocityDelta, normal);
+
+            if (dot > 0) {
+                let coeff = 0.1;
+                let strength = (1 + coeff) * dot;
+                let impulse = normal.mult(strength);
+
+                this.vel.sub(impulse);
+                ball.vel.add(impulse);
+            }
+        }
     }
 }

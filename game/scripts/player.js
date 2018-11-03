@@ -1,5 +1,6 @@
 class Player {
     constructor() {
-        this.isActive = true;
+        this.isActive = undefined;
+        this.id = undefined;
     }
 }
