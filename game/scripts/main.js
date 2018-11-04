@@ -3,7 +3,7 @@ let cueball;
 let mouse;
 let table;
 let tableSprite;
-let player;
+let playerManager;
 let socket;
 
 function preload() {
@@ -15,12 +15,13 @@ function setup() {
 
     table = new Table(width, height, tableSprite);
 
-    cueball = new Ball(width / 5, height / 2, color(255, 255, 255));
+    cueball = new Ball(width / 5, height / 2, color(255, 255, 255),'', false, true);
     cue = new Cue();
 
-    table.setupBalls();
+    //table.setupBalls();
 
-    player = new Player();
+    playerManager = new PlayerManager();
+    
     /*socket = io();
 
     socket.on('init game', (data) => {
@@ -64,12 +65,12 @@ function draw() {
 
     //check if cueball is potted
     if (cueball.inPot) {
-        player.isActive = false;
+        playerManager.switchPlayers();
     }
 
     //checking cueball movement
     if (!cueball.isMoving) {
-        player.isActive = true;
+        playerManager.getActivePlayer().isActive = true;
     } else { //only check for collisions when cueball is moving
         for (let i = 0; i < table.balls.length - 1; i++) {
             for (let j = i + 1; j < table.balls.length; j++) {
@@ -81,14 +82,14 @@ function draw() {
     }
     
     //only display and update cue when player is active
-    if (player.isActive) {
+    if (playerManager.getActivePlayer().isActive) {
         cue.update(cueball, mouse);
     }
 }
 
 function mousePressed() {
     //if the player is inactive, then do not listen for mouse events
-    if (!player.isActive) return; 
+    if (!playerManager.getActivePlayer().isActive) return; 
 
     //player is in the process of shooting, save clicked position
     cue.isShooting = true;
@@ -97,10 +98,10 @@ function mousePressed() {
 }
 
 function mouseReleased() {
-    if (!player.isActive) return;
+    if (!playerManager.getActivePlayer().isActive) return;
 
     //shoot the cueball, and set player to inactive, to prevent them from making another shot while the cueball is moving
     cue.isShooting = false;
     cueball.shoot(cue.angle, cue.shootingStrength);
-    player.isActive = false;
+    playerManager.getActivePlayer().isActive = false;
 }

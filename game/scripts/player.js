@@ -1,6 +1,7 @@
 class Player {
-    constructor() {
-        this.isActive = undefined;
+    constructor(_isActive) {
+        this.isActive = _isActive;
+        this.ballType = undefined;
         this.id = undefined;
     }
 }

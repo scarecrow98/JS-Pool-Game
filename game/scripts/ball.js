@@ -1,5 +1,5 @@
 class Ball {
-    constructor(_x, _y, _color, _number, _striped) {
+    constructor(_x, _y, _color, _number, _striped, _isCueball = false) {
         this.pos = createVector(_x, _y);
         this.color = _color
         this.radius = 15;
@@ -9,14 +9,21 @@ class Ball {
         this.inPot = false;
         this.number = _number ? _number.toString() : '';
         this.striped = _striped;
+        this.isCueball = _isCueball;
     }
 
     update(table) {
-        //hole detection
+        //pot detection
         for (let hole of table.holes) {
             if (dist(hole.x, hole.y, this.pos.x, this.pos.y) < table.holeRadius) {
-                this.inPot = true;
-                return;
+                //this.inPot = true;
+                if (!this.isCueball) {
+                    console.log(this);
+                    table.balls.splice(this.number - 1, 1);
+                } else { //cueball is potted
+                    this.pos.set(table.ww / 5, table.wh / 2);
+                    this.vel.set(0, 0);
+                }
             }
         }
 
