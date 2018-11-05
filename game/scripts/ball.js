@@ -13,20 +13,6 @@ class Ball {
     }
 
     update(table) {
-        //pot detection
-        for (let hole of table.holes) {
-            if (dist(hole.x, hole.y, this.pos.x, this.pos.y) < table.holeRadius) {
-                //this.inPot = true;
-                if (!this.isCueball) {
-                    console.log(this);
-                    table.balls.splice(this.number - 1, 1);
-                } else { //cueball is potted
-                    this.pos.set(table.ww / 5, table.wh / 2);
-                    this.vel.set(0, 0);
-                }
-            }
-        }
-
         //table edges detection
         if (this.pos.x + this.radius > table.bottomRightCorner.x || this.pos.x - this.radius < table.topLeftCorner.x) {
             this.vel.x *= -1;

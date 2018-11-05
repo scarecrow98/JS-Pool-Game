@@ -13,14 +13,12 @@ function preload() {
 function setup() {
     createCanvas(1000, 500);
 
+    playerManager = new PlayerManager();
     table = new Table(width, height, tableSprite);
-
     cueball = new Ball(width / 5, height / 2, color(255, 255, 255),'', false, true);
     cue = new Cue();
 
-    //table.setupBalls();
-
-    playerManager = new PlayerManager();
+    table.shuffleBalls();
     
     /*socket = io();
 
@@ -60,18 +58,22 @@ function draw() {
 
     //update balls and draw them
     for (let ball of table.balls) {
+        if (ball.inPot) continue;
+
         ball.update(table);
     }
 
-    //check if cueball is potted
+    //check if cueball is potted, and if so, switch players 
     if (cueball.inPot) {
         playerManager.switchPlayers();
     }
 
     //checking cueball movement
+    //if cueball is not moving, then we allow the active player to interact with the game
     if (!cueball.isMoving) {
-        playerManager.getActivePlayer().isActive = true;
-    } else { //only check for collisions when cueball is moving
+        playerManager.getActivePlayer().setStatus(true);
+        cue.update(cueball, mouse);
+    } else { //otherwise the cueball is moving, so we check for collisions
         for (let i = 0; i < table.balls.length - 1; i++) {
             for (let j = i + 1; j < table.balls.length; j++) {
                 table.balls[i].collide(table.balls[j]);
@@ -80,16 +82,12 @@ function draw() {
         }
         cueball.collide(table.balls[table.balls.length - 1]);
     }
-    
-    //only display and update cue when player is active
-    if (playerManager.getActivePlayer().isActive) {
-        cue.update(cueball, mouse);
-    }
+
 }
 
 function mousePressed() {
     //if the player is inactive, then do not listen for mouse events
-    if (!playerManager.getActivePlayer().isActive) return; 
+    if (!playerManager.getActivePlayer().getStatus()) return; 
 
     //player is in the process of shooting, save clicked position
     cue.isShooting = true;
@@ -98,10 +96,10 @@ function mousePressed() {
 }
 
 function mouseReleased() {
-    if (!playerManager.getActivePlayer().isActive) return;
+    if (!playerManager.getActivePlayer().getStatus()) return;
 
     //shoot the cueball, and set player to inactive, to prevent them from making another shot while the cueball is moving
     cue.isShooting = false;
     cueball.shoot(cue.angle, cue.shootingStrength);
-    playerManager.getActivePlayer().isActive = false;
+    playerManager.getActivePlayer().setStatus(false);
 }

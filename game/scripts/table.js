@@ -40,7 +40,6 @@ class Table {
             new Ball(720, 280, color(64, 142, 28), 14, true),
             new Ball(720, 310, color(160, 68, 43), 15, true)
         ];
-        this.holeRadius = 26;
     }
 
     display() {
@@ -82,7 +81,12 @@ class Table {
         }*/
     }
 
-    setupBalls() {
-        
+    shuffleBalls() {
+        for (let i = 0; i < this.balls.length; i++) {            
+            let idx = floor(random(this.balls.length));
+            let tmp = this.balls[idx].pos;
+            this.balls[idx].pos = this.balls[i].pos;
+            this.balls[i].pos = tmp;
+        }
     }
 }
